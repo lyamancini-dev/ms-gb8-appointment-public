@@ -1,7 +1,7 @@
 # Hospital Infrastructure Project
 
 ## Overview
-This repository contains the infrastructure code and application components for a clinic's automated system. The project focuses on reliability and automated tracking of medical devices integrated with national systems.
+
 
 ## Project Structure
 - **terraform/**: Infrastructure as Code for Proxmox.
