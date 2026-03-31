@@ -1,0 +1,62 @@
+---
+- name: "App Nodes Setup: Users, Directories and Nginx"
+  hosts: app_nodes
+  become: yes
+  vars:
+    app_user: deploy
+    project_root: /opt/hospital
+
+  tasks:
+    - name: Create deploy user
+      user:
+        name: "{{ app_user }}"
+        groups: docker
+        append: yes
+        shell: /bin/bash
+        state: present
+
+    - name: Create project directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+      loop:
+        - "{{ project_root }}"
+        - "{{ project_root }}/config"
+        - "{{ project_root }}/data"
+        - "{{ project_root }}/data/postgres"
+        - "{{ project_root }}/data/redis"
+
+    - name: Install Nginx on host
+      apt:
+        name: nginx
+        state: present
+
+    - name: Enable Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Allow HTTP and HTTPS in Firewall
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - '80'
+        - '443'
+
+    - name: Delete default nginx config
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: Reload Nginx
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded

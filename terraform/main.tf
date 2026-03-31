@@ -75,7 +75,7 @@ resource "proxmox_virtual_environment_vm" "server" {
     }
 
     user_account {
-      username = "admin"
+      username = "root"
       password = var.vm_password
       keys     = [var.ssh_public_key]
     }
