@@ -1,0 +1,50 @@
+---
+- name: "CI/CD Setup: Deploy Gitea on VM 103"
+  hosts: cicd_nodes
+  become: yes
+  vars:
+    cicd_user: deploy
+    gitea_dir: /opt/gitea
+
+  tasks:
+    - name: Create deploy user on CI/CD node
+      user:
+        name: "{{ cicd_user }}"
+        groups: docker
+        append: yes
+        state: present
+
+    - name: Create Gitea directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ cicd_user }}"
+        group: "{{ cicd_user }}"
+        mode: '0755'
+      loop:
+        - "{{ gitea_dir }}"
+        - "{{ gitea_dir }}/data"
+        - "{{ gitea_dir }}/runner-data"
+
+    - name: Copy Docker Compose file for Gitea
+      copy:
+        src: ../../cicd/gitea-compose.yml
+        dest: "{{ gitea_dir }}/docker-compose.yml"
+        owner: "{{ cicd_user }}"
+        group: "{{ cicd_user }}"
+
+    - name: Pull and Start Gitea containers
+      shell: "docker compose -f {{ gitea_dir }}/docker-compose.yml up -d"
+      args:
+        chdir: "{{ gitea_dir }}"
+      register: compose_output
+
+    - name: Show Docker Compose output
+      debug:
+        var: compose_output.stdout_lines
+
+    - name: Open Gitea port in Firewall
+      ufw:
+        rule: allow
+        port: '3000'
+        proto: tcp
