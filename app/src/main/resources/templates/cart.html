@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина записи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- Подключаем шапку -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Корзина</li>
+        </ol>
+    </nav>
+
+    <h2>Выбранные слоты для записи</h2>
+
+    <!-- Если корзина пуста -->
+    <div th:if="${cart.isEmpty()}" class="alert alert-info">
+        Корзина пуста. Выберите свободные слоты в расписании.
+    </div>
+
+    <!-- Если в корзине есть слоты -->
+    <div th:unless="${cart.isEmpty()}">
+        <a href="/cart/clear" class="btn btn-danger mb-3">Очистить корзину</a>
+
+        <table class="table table-bordered bg-white">
+            <thead>
+            <tr>
+                <th>Кабинет</th>
+                <th>Дата и время</th>
+                <th>Действие</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="slot : ${cart}">
+                <td th:text="${slot.cabinet.name}">КТ</td>
+                <td th:text="${slot.startTime}">2026-03-09 10:00</td>
+                <td><a th:href="@{/cart/remove/{id}(id=${slot.id})}" class="btn btn-sm btn-outline-danger">Удалить</a></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Кнопка перехода к оформлению -->
+        <a href="/checkout" class="btn btn-primary btn-lg">Оформить запись</a>
+    </div>
+
+    <br>
+    <a href="/" class="btn btn-secondary">← Вернуться к кабинетам</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Расписание</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- Подключаем шапку -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-4">
+    <!-- Заголовок -->
+    <h2 th:text="${cabinet.name} + ' (Каб. ' + ${cabinet.roomNumber} + ')'">Кабинет</h2>
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item"><a href="/">Кабинеты</a></li>
+            <!-- Активная страница (текущий кабинет) -->
+            <li class="breadcrumb-item active" aria-current="page" th:text="${cabinet.name} + ' (Каб. ' + ${cabinet.roomNumber} + ')'">КТ 140</li>
+        </ol>
+    </nav>
+    <!-- Блок выбора даты -->
+    <div class="row mb-3 align-items-center">
+        <div class="col-auto">
+            <form th:action="@{/cabinet/{id}(id=${cabinet.id})}" method="get">
+                <div class="input-group">
+                    <span class="input-group-text">Выбрать дату:</span>
+                    <input type="date" name="date" th:value="${selectedDate}" class="form-control">
+                    <button type="submit" class="btn btn-outline-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-auto">
+            <!-- Ссылка на генерацию слотов, передаем текущую выбранную дату -->
+            <a th:href="@{/admin/generate(cabinetId=${cabinet.id}, date=${selectedDate})}"
+               class="btn btn-success">
+                + Добавить слоты на эту дату
+            </a>
+        </div>
+    </div>
+
+    <p>Дата: <b th:text="${date}">2026-03-09</b></p>
+    <!-- Форма добавления одного слота вручную -->
+    <!-- Блок управления слотами -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Управление слотами</h5>
+            <div class="row">
+                <!-- Колонка 1: Добавление вручную -->
+                <div class="col-md-8">
+                    <form th:action="@{/slot/add}" method="post" class="row g-3 align-items-end">
+                        <input type="hidden" name="cabinetId" th:value="${cabinet.id}">
+                        <input type="hidden" name="date" th:value="${selectedDate}">
+
+                        <div class="col-auto">
+                            <label class="form-label">Время начала</label>
+                            <input type="time" name="time" class="form-control" required>
+                        </div>
+
+                        <div class="col-auto">
+                            <label class="form-label">Длительность (мин)</label>
+                            <input type="number" name="duration" class="form-control" th:placeholder="${cabinet.defaultSlotMinutes}" value="15">
+                        </div>
+
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-outline-primary">Добавить слот</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Колонка 2: Удаление всех -->
+                <div class="col-md-4 text-end align-self-end">
+                    <form th:action="@{/schedule/clear}" method="get"
+                          onsubmit="return confirm('ВНИМАНИЕ! Вы уверены, что хотите удалить ВСЕ слоты на эту дату? Это действие необратимо и удалит также записи пациентов.');">
+                        <input type="hidden" name="cabinetId" th:value="${cabinet.id}">
+                        <input type="hidden" name="date" th:value="${selectedDate}">
+                        <button type="submit" class="btn btn-outline-danger">
+                            Удалить все слоты на дату
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="/" class="btn btn-secondary mb-3">← Назад к кабинетам</a>
+
+    <!-- Таблица записей -->
+    <table class="table table-hover table-bordered bg-white">
+        <thead class="table-dark">
+        <tr>
+            <th style="width: 100px;">Время</th>
+            <th>Пациент</th>
+            <th>Исследование</th>
+            <th style="width: 120px;">Телефон</th>
+            <th style="width: 120px;">Врач</th>
+            <th style="width: 100px;">Оплата</th>
+            <th>Примечание</th>
+            <th style="width: 150px;">Действие</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="app : ${appointments}">
+            <!-- Время -->
+            <td th:text="${app.startTime.toLocalTime()}">09:00</td>
+
+            <!-- Пациент -->
+            <td th:if="${app.patient != null}" th:text="${app.patient.fullName}">Иванов И.И.</td>
+            <td th:unless="${app.patient != null}" class="text-success"><b>СВОБОДНО</b></td>
+
+            <!-- Исследование -->
+            <td th:text="${app.studyArea}">ОБП</td>
+
+            <!-- Телефон -->
+            <td th:text="${app.patient != null} ? ${app.patient.phone} : ''">8900...</td>
+
+            <!-- Врач -->
+            <td th:text="${app.referringSource}">Наумк</td>
+
+            <!-- Оплата -->
+            <td>
+                <span th:if="${app.patient != null and app.quota}" class="badge bg-success">Бесплатно</span>
+                <span th:if="${app.patient != null and !app.quota}" class="badge bg-warning text-dark">Платно</span>
+                <!-- Если пациента нет, ячейка останется пустой -->
+            </td>
+
+            <!-- Примечание -->
+            <td th:text="${app.note}">...</td>
+
+            <!-- КНОПКИ ДЕЙСТВИЙ -->
+            <td>
+                <!-- Если слот ЗАНЯТ -->
+                <span th:if="${app.patient != null}">
+                        <a th:href="@{/edit/{id}(id=${app.id})}" class="btn btn-sm btn-info text-white me-1">Изменить</a>
+                        <a th:href="@{/cancel/{id}(id=${app.id})}" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Отменить запись?')">Х</a>
+                    </span>
+
+                <!-- Если слот СВОБОДЕН -->
+                <span th:if="${app.patient == null}">
+                        <a th:href="@{/cart/add/{id}(id=${app.id})}" class="btn btn-sm btn-success me-1">В корзину</a>
+                         <a th:href="@{/slot/delete/{id}(id=${app.id})}" class="btn btn-sm btn-outline-danger"
+                            onclick="return confirm('Удалить этот слот?')">
+                            Х
+                         </a>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

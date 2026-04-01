@@ -1,0 +1,42 @@
+services:
+  # 1. Контейнер с базой данных PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: hospital_db
+    environment:
+      # Эти переменные Spring Boot подхватит через application.properties
+      POSTGRES_DB: ${DB_NAME:-hospital_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    volumes:
+      # Папка для хранения данных, чтобы они не удалялись при перезагрузке
+      - postgres_data:/var/lib/postgresql/data
+      # Подключаем наш SQL-скрипт для создания схем (если он есть)
+      - ./docker/postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Твоё Spring Boot приложение
+  app:
+    image: hospital-app
+    container_name: hospital_app_container
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Указываем приложению, где искать базу (имя сервиса 'db')
+      DB_HOST: db
+      DB_NAME: ${DB_NAME:-hospital_db}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+    ports:
+      - "8080:8080"
+    restart: always
+
+volumes:
+  postgres_data:

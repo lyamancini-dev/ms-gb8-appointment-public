@@ -14,3 +14,22 @@
 # OS
 .DS_Store
 Thumbs.db
+
+# Секреты
+*.key
+*.token
+.env
+
+# Java/Maven
+target/
+*.class
+*.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+
+# Система
+.DS_Store
+Thumbs.db

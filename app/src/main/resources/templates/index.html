@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Подключаем шапку -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Запись на инструментальные исследования</h1>
+    <!-- Остальной код index.html... -->
+    <!-- Форма поиска -->
+    <div class="mb-4">
+        <form action="/search" method="get" class="d-flex">
+            <input type="text" name="query" class="form-control me-2" placeholder="Поиск по ФИО пациента..." required>
+            <button type="submit" class="btn btn-outline-success">Найти</button>
+        </form>
+    </div>
+    <div class="row">
+        <!-- Цикл по кабинетам (как товаров в магазине) -->
+        <div class="col-md-4 mb-3" th:each="cabinet : ${cabinets}">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${cabinet.name}">Название</h5>
+                    <h6 class="card-subtitle mb-2 text-muted" th:text="'Кабинет: ' + ${cabinet.roomNumber}">Номер</h6>
+                    <p class="card-text">Шаг записи: <span th:text="${cabinet.defaultSlotMinutes}">15</span> мин.</p>
+
+                    <!-- Кнопка перехода в расписание -->
+                    <a th:href="@{/cabinet/{id}(id=${cabinet.id})}" class="btn btn-primary">Открыть расписание</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

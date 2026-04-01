@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Админ-панель</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-4">
+  <h1>Панель администратора</h1>
+  <p class="lead">Управление расписанием и справочниками</p>
+
+  <div class="row mt-4">
+    <!-- Карточка Кабинеты -->
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Кабинеты</h5>
+          <p class="card-text">Создание, редактирование и удаление кабинетов (КТ, МРТ, УЗИ). Настройка шага записи.</p>
+          <a href="/admin/cabinets" class="btn btn-primary">Перейти</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Карточка Генерация слотов -->
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Генерация слотов</h5>
+          <p class="card-text">Создание сетки расписания для кабинета на определенную дату.</p>
+          <a href="/admin/generate" class="btn btn-success">Создать расписание</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Карточка Управление записями -->
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Управление записями</h5>
+          <p class="card-text">Просмотр всех записей, изменение статусов (Завершено/Не явился).</p>
+          <a href="/admin/appointments" class="btn btn-primary">Перейти</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Можно добавить другие разделы по мере необходимости -->
+  </div>
+
+
+  <br>
+  <a href="/" class="btn btn-secondary">← Вернуться на главную</a>
+</div>
+
+</body>
+</html>

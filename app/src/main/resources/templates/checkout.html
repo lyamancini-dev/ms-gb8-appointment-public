@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Оформление записи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item"><a href="/cart">Корзина</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Оформление записи</li>
+        </ol>
+    </nav>
+
+    <h2>Оформление записи на исследования</h2>
+
+    <!-- ОТКРЫВАЕМ ФОРМУ ЗДЕСЬ -->
+    <form th:action="@{/checkout}" th:object="${checkoutForm}" method="post" novalidate>
+
+        <!-- Сводка по корзине (Теперь внутри формы!) -->
+        <div class="card mb-4">
+            <div class="card-header">Выбранные слоты</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" th:each="slot, stat : ${cart}">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <b th:text="${slot.cabinet.name}">КТ</b><br>
+                            <span th:text="${slot.startTime}">Дата</span>
+                        </div>
+                        <div class="col-md-8">
+                            <!-- Поле исследования для конкретного слота -->
+                            <label class="form-label small">Область исследования:</label>
+                            <input type="text" class="form-control"
+                                   th:name="'studyArea_' + ${slot.id}"
+                                   th:value="${slot.studyArea}"
+                                   placeholder="Например: ОГК">
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Данные пациента -->
+        <div class="card mb-4">
+            <div class="card-header">Данные пациента</div>
+            <div class="card-body">
+
+                <!-- ФИО -->
+                <div class="mb-3">
+                    <label class="form-label">ФИО пациента *</label>
+                    <!-- Добавили th:classappend для красной рамки -->
+                    <input type="text" th:field="*{fullName}" class="form-control"
+                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''">
+                    <!-- Блок ошибки -->
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}">
+                        <span th:errors="*{fullName}">Ошибка ФИО</span>
+                    </div>
+                </div>
+
+                <!-- Телефон -->
+                <div class="mb-3">
+                    <label class="form-label">Телефон *</label>
+                    <input type="text" th:field="*{phone}" class="form-control"
+                           th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}">
+                        <span th:errors="*{phone}">Ошибка телефона</span>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" th:field="*{email}" class="form-control" placeholder="email@example.com">
+                </div>
+
+                <!-- Тип оплаты -->
+                <div class="mb-3">
+                    <label class="form-label">Тип оплаты</label>
+                    <select th:field="*{paymentType}" class="form-select">
+                        <option value="бесплатно">Бесплатно (Квота)</option>
+                        <option value="платно">Платно</option>
+                    </select>
+                </div>
+
+                <!-- Направивший врач -->
+                <div class="mb-3">
+                    <label class="form-label">Направивший врач</label>
+                    <input type="text" th:field="*{referringDoctor}" class="form-control">
+                </div>
+
+                <!-- Примечание -->
+                <div class="mb-3">
+                    <label class="form-label">Примечание</label>
+                    <textarea th:field="*{notes}" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success btn-lg">Подтвердить запись</button>
+        <a href="/cart" class="btn btn-link">Назад в корзину</a>
+
+        <!-- ЗАКРЫВАЕМ ФОРМУ -->
+    </form>
+</div>
+
+</body>
+</html>

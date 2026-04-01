@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Генерация расписания</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Подключаем шапку -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-4">
+  <h2>Генерация слотов расписания</h2>
+
+  <div class="card">
+    <div class="card-body">
+      <form th:action="@{/admin/generate}" th:object="${form}" method="post">
+
+        <!-- Выбор кабинета -->
+        <div class="mb-3">
+          <label class="form-label">Кабинет</label>
+          <select th:field="*{cabinetId}" class="form-select">
+            <option th:each="cab : ${cabinets}" th:value="${cab.id}" th:text="${cab.name}">КТ</option>
+          </select>
+        </div>
+
+        <!-- Дата -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Дата начала</label>
+            <input type="date" th:field="*{startDate}" class="form-control" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Дата окончания</label>
+            <input type="date" th:field="*{endDate}" class="form-control">
+            <div class="form-text">Оставьте пустым или укажите ту же дату для создания расписания на один день.</div>
+          </div>
+        </div>
+
+        <!-- Время начала -->
+        <div class="mb-3">
+          <label class="form-label">Начало работы (например, 08:00)</label>
+          <input type="time" th:field="*{startTime}" class="form-control" required>
+        </div>
+
+        <!-- Время конца -->
+        <div class="mb-3">
+          <label class="form-label">Конец работы (например, 17:00)</label>
+          <input type="time" th:field="*{endTime}" class="form-control" required>
+        </div>
+
+        <!-- Шаг записи -->
+        <div class="mb-3">
+          <label class="form-label">Шаг записи (минуты)</label>
+          <input type="number" th:field="*{intervalMinutes}" class="form-control" required>
+          <div class="form-text">По умолчанию подставляется шаг из кабинета. Можно изменить вручную.</div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Создать расписание</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование записи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <!-- Ссылка на расписание этого кабинета -->
+            <li class="breadcrumb-item">
+                <a th:href="@{/cabinet/{id}(id=${slot.cabinet.id})}" th:text="${slot.cabinet.name}">КТ</a>
+            </li>
+            <!-- Текущая страница -->
+            <li class="breadcrumb-item active" aria-current="page">Редактирование записи</li>
+        </ol>
+    </nav>
+    <h2>Редактирование записи</h2>
+    <p><b>Кабинет:</b> <span th:text="${slot.cabinet.name}">КТ</span></p>
+    <p><b>Время:</b> <span th:text="${slot.startTime}">Дата</span></p>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/edit/{id}(id=${slot.id})}" th:object="${checkoutForm}" method="post">
+
+                <!-- ФИО -->
+                <div class="mb-3">
+                    <label class="form-label">ФИО пациента *</label>
+                    <input type="text" th:field="*{fullName}" class="form-control"
+                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}">
+                        <span th:errors="*{fullName}">Ошибка</span>
+                    </div>
+                </div>
+
+                <!-- Телефон -->
+                <div class="mb-3">
+                    <label class="form-label">Телефон *</label>
+                    <input type="text" th:field="*{phone}" class="form-control"
+                           th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('phone')}">
+                        <span th:errors="*{phone}">Ошибка</span>
+                    </div>
+                </div>
+
+                <!-- Оплата -->
+                <div class="mb-3">
+                    <label class="form-label">Тип оплаты</label>
+                    <select th:field="*{paymentType}" class="form-select">
+                        <option value="бесплатно">Бесплатно</option>
+                        <option value="платно">Платно</option>
+                    </select>
+                </div>
+
+                <!-- Исследование -->
+                <div class="mb-3">
+                    <label class="form-label">Область исследования</label>
+                    <input type="text" th:field="*{studyArea}" class="form-control" placeholder="Например: ОБП, БЦА">
+                </div>
+
+                <!-- Врач -->
+                <div class="mb-3">
+                    <label class="form-label">Направивший врач</label>
+                    <input type="text" th:field="*{referringDoctor}" class="form-control">
+                </div>
+
+                <!-- Примечание -->
+                <div class="mb-3">
+                    <label class="form-label">Примечание</label>
+                    <textarea th:field="*{notes}" class="form-control"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                <a th:href="@{/cabinet/{id}(id=${slot.cabinet.id})}" class="btn btn-link">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
