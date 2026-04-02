@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-push:
-    # Используем одну из меток твоего раннера
+    # Используем одну из меток раннера
     runs-on: ubuntu-22.04
     
     steps:
@@ -18,7 +18,7 @@ jobs:
         with:
           registry: 10.6.1.14:3000
           username: ${{ gitea.actor }}
-          password: ${{ secrets.GITEA_TOKEN }}
+          password: ${{ secrets.GITEATOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
