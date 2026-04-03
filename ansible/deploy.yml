@@ -5,7 +5,16 @@
     project_root: /opt/hospital
     app_user: deploy
   tasks:
-    # Шаг 1: Копируем папку со скриптами инициализации БД (init-db.sql)
+    # 1. Генерация .env файла из шаблона (используем ваши секреты из Vault)
+    - name: Generate .env file from template
+      template:
+        src: templates/env.j2
+        dest: "{{ project_root }}/.env"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0600'
+
+    # 2. Копирование папки со скриптами инициализации (регистр строчный: docker)
     - name: Copy SQL initialization scripts
       copy:
         src: ../docker/
@@ -14,7 +23,7 @@
         group: "{{ app_user }}"
         mode: '0755'
 
-    # Шаг 2: Копируем основной файл docker-compose
+    # 3. Копирование основного файла конфигурации Docker Compose
     - name: Copy production docker-compose.yml
       copy:
         src: ../docker-compose.yml
@@ -22,7 +31,7 @@
         owner: "{{ app_user }}"
         group: "{{ app_user }}"
 
-    # Шаг 3: Скачиваем свежий образ из Gitea и перезапускаем сервисы
+    # 4. Обновление образов и перезапуск контейнеров
     - name: Pull latest images and restart services
       shell: |
         docker compose pull
