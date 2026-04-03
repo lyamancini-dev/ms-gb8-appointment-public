@@ -1,0 +1,36 @@
+- name: "Deploy Hospital App to Production"
+  hosts: hospital-prod
+  become: yes
+  vars:
+    project_root: /opt/hospital
+    app_user: deploy
+  tasks:
+    # Шаг 1: Копируем папку со скриптами инициализации БД (init-db.sql)
+    - name: Copy SQL initialization scripts
+      copy:
+        src: ../docker/
+        dest: "{{ project_root }}/docker/"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+
+    # Шаг 2: Копируем основной файл docker-compose
+    - name: Copy production docker-compose.yml
+      copy:
+        src: ../docker-compose.yml
+        dest: "{{ project_root }}/docker-compose.yml"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+
+    # Шаг 3: Скачиваем свежий образ из Gitea и перезапускаем сервисы
+    - name: Pull latest images and restart services
+      shell: |
+        docker compose pull
+        docker compose up -d --remove-orphans
+      args:
+        chdir: "{{ project_root }}"
+      register: deploy_status
+
+    - name: Show Deployment Status
+      debug:
+        var: deploy_status.stdout_lines

@@ -55,6 +55,19 @@
         state: absent
       notify: Reload Nginx
 
+    - name: Configure insecure Docker registry for Production
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+            "insecure-registries": ["10.6.1.14:3000"]
+          }
+          
+    - name: Restart Docker to apply config
+      service:
+        name: docker
+        state: restarted
+
   handlers:
     - name: Reload Nginx
       service:

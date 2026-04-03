@@ -23,7 +23,7 @@ services:
 
   # 2. Твоё Spring Boot приложение
   app:
-    image: hospital-app
+    image: 10.6.1.14:3000/deploy/hospital-app:latest
     container_name: hospital_app_container
     depends_on:
       db:
