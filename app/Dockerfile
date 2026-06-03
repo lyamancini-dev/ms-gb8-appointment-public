@@ -1,5 +1,5 @@
-# Этап 1: Сборка (используем легкий образ Maven)
-FROM maven:3.9-eclipse-temurin-17-alpine AS builder
+# Этап 1: Сборка (используем локальный образ Maven из реестра Gitea)
+FROM 10.6.1.14:3000/deploy/base:maven-3.9-eclipse-temurin-17-alpine AS builder
 WORKDIR /build
 
 # Копируем конфиг и качаем зависимости
@@ -10,8 +10,8 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests -B
 
-# Этап 2: Запуск (берем только Java, без лишнего мусора)
-FROM eclipse-temurin:17-jre-alpine
+# Этап 2: Запуск (локальный образ JRE)
+FROM 10.6.1.14:3000/deploy/base:eclipse-temurin-17-jre-alpine
 WORKDIR /app
 
 # Безопасность: работаем не от root
