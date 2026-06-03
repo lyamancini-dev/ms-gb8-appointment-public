@@ -41,3 +41,4 @@ This repository contains the infrastructure code and application components for 
 - **Hypervisor**: Proxmox VE
 - **Base Image**: Ubuntu 22.04 LTS (Cloud Image)
 - **Template ID**: 9000 (Pre-configured with QEMU Guest Agent)
+# Автоматическая синхронизация из Gitea
