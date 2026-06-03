@@ -36,3 +36,12 @@ Thumbs.db
 app/data/*.db
 terraform/terraform.exe
 terraform/*.exe
+
+# Terraform secrets and state
+terraform/*.tfvars
+terraform/terraform.tfstate*
+terraform/.terraform.lock.hcl
+
+# Exported dumps (безопасность)
+hospital-project-output.*
+*.md
