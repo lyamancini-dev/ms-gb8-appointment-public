@@ -35,3 +35,4 @@ target/
 Thumbs.db
 app/data/*.db
 terraform/terraform.exe
+terraform/*.exe
