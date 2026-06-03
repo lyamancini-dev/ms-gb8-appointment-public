@@ -33,3 +33,5 @@ target/
 # Система
 .DS_Store
 Thumbs.db
+app/data/*.db
+terraform/terraform.exe

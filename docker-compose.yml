@@ -1,48 +1,46 @@
-version: "3.8"
-
 services:
-  # 1. База данных: Хранение записей и слотов
+  # 1. База данных PostgreSQL: Хранит данные приложения и бота
   db:
     image: postgres:15-alpine
     container_name: hospital_db
     restart: always
     environment:
+      # Переменные подставляются из .env файла, созданного Ansible
       POSTGRES_DB: ${DB_NAME:-hospital_db}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      # Используем папки, созданные Ansible для персистентности [2]
+      # Хранение данных на хосте VM 101
       - ./data/postgres:/var/lib/postgresql/data
-      # Скорректированный путь к скрипту инициализации [1]
+      # Скрипт инициализации схем hospital_core и bot_state
       - ./docker/postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     deploy:
       resources:
         limits:
-          memory: 1GB # Ограничение для старого железа [3]
+          memory: 1GB
     healthcheck:
-      # Проверка готовности базы для зависимых сервисов [1]
+      # Проверка готовности базы для зависимых сервисов
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # 2. Redis: Защита от Race Condition (Distributed Lock)
+  # 2. Redis: Используется ботом для Distributed Lock (защита от гонки)
   redis:
     image: redis:7-alpine
     container_name: hospital_redis
     restart: always
     command: redis-server --appendonly yes
     volumes:
-      # Привязка к папке, созданной Ansible [2]
       - ./data/redis:/data
     deploy:
       resources:
         limits:
           memory: 512MB
 
-  # 3. Backend: Spring Boot приложение
+  # 3. Backend: Ваше Spring Boot Java приложение
   app:
-    # Путь к образу в твоем локальном реестре [4, 5]
+    # Путь к образу в локальном реестре на VM 103
     image: 10.6.1.14:3000/deploy/hospital-app:latest
     container_name: hospital_app_container
     restart: always
@@ -52,15 +50,37 @@ services:
       redis:
         condition: service_started
     environment:
-      # Spring Boot автоматически подхватит эти настройки [1]
+      # Настройки подключения, которые подхватит Spring Boot
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-hospital_db}
       SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
+      # Дополнительные настройки из вашего application.properties
+      DB_HOST: db
     ports:
       - "8080:8080"
     deploy:
       resources:
         limits:
-          memory: 2GB # Лимит для JVM [3, 6]
+          memory: 2GB
+
+  # 4. Bot: Python-сервис для мессенджера MAX
+  bot:
+    image: 10.6.1.14:3000/deploy/hospital-bot:latest
+    container_name: hospital_bot
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      # Бот использует те же секреты, что и база
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      # Токен бота из Ansible Vault
+      BOT_TOKEN: ${BOT_TOKEN}
