@@ -41,7 +41,7 @@ services:
   # 3. Backend: Ваше Spring Boot Java приложение
   app:
     # Путь к образу в локальном реестре на VM 103
-    image: 10.6.1.14:3000/deploy/hospital-app:latest
+    image: 192.168.1.14:3000/deploy/hospital-app:latest
     container_name: hospital_app_container
     restart: always
     depends_on:
@@ -67,7 +67,7 @@ services:
 
   # 4. Bot: Python-сервис для мессенджера MAX
   bot:
-    image: 10.6.1.14:3000/deploy/hospital-bot:latest
+    image: 192.168.1.14:3000/deploy/hospital-bot:latest
     container_name: hospital_bot
     restart: always
     depends_on:

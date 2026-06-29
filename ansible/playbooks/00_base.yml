@@ -47,9 +47,9 @@
       blockinfile:
         path: /etc/hosts
         block: |
-          10.6.1.17 hospital-prod
-          10.6.1.19 hospital-dev
-          10.6.1.14 hospital-cicd
+          192.168.1.17 hospital-prod
+          192.168.1.19 hospital-dev
+          192.168.1.14 hospital-cicd
         marker: "# {mark} ANSIBLE MANAGED HOSTS"
 
     - name: Install useful CLI tools

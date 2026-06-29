@@ -60,7 +60,7 @@
         dest: /etc/docker/daemon.json
         content: |
           {
-            "insecure-registries": ["10.6.1.14:3000"]
+            "insecure-registries": ["192.168.1.14:3000"]
           }
           
     - name: Restart Docker to apply config

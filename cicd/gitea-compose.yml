@@ -8,7 +8,7 @@ services:
       - USER_UID=1000
       - USER_GID=1000
       - GITEA__database__DB_TYPE=sqlite3 # Экономим RAM, не ставим Postgres
-      - GITEA__server__ROOT_URL=http://10.6.1.14:3000/ 
+      - GITEA__server__ROOT_URL=http://192.168.1.14:3000/ 
     restart: always
     volumes:
       - ./data:/data
@@ -29,5 +29,5 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock # Магия: раннер использует докер хоста
     environment:
       - CONFIG_FILE=/data/config.yaml
-      - GITEA_INSTANCE_URL=http://10.6.1.14:3000/
-      - GITEA_RUNNER_REGISTRATION_TOKEN=UU3O3DjdilPwx3LQ5OfDdubWuHfJC0nW06DJZuIR
+      - GITEA_INSTANCE_URL=http://192.168.1.14:3000/
+      - GITEA_RUNNER_REGISTRATION_TOKEN=CHANGE_ME
