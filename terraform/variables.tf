@@ -1,5 +1,5 @@
 variable "proxmox_url" {
-  description = "API endpoint for Proxmox (e.g., https://10.6.1.25:8006/api2/json)"
+  description = "API endpoint for Proxmox (e.g., https://192.168.1.25:8006/api2/json)"
   type        = string
 }
 

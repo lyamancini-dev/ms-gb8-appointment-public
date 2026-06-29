@@ -16,7 +16,7 @@ jobs:
       - name: Login to Gitea Registry
         uses: docker/login-action@v2
         with:
-          registry: 10.6.1.14:3000
+          registry: 192.168.1.14:3000
           username: ${{ gitea.actor }}
           password: ${{ secrets.GITEATOKEN }}
 
@@ -25,4 +25,4 @@ jobs:
         with:
           context: ./app
           push: true
-          tags: 10.6.1.14:3000/${{ gitea.repository_owner }}/hospital-app:latest
+          tags: 192.168.1.14:3000/${{ gitea.repository_owner }}/hospital-app:latest
