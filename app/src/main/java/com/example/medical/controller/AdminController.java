@@ -28,14 +28,12 @@ public class AdminController {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
-    // --- DASHBOARD ---
 
     @GetMapping
     public String adminDashboard() {
         return "admin/dashboard";
     }
 
-    // --- УПРАВЛЕНИЕ КАБИНЕТАМИ ---
 
     @GetMapping("/cabinets")
     public String listCabinets(Model model) {
@@ -59,7 +57,6 @@ public class AdminController {
         return "redirect:/admin/cabinets";
     }
 
-    // ИСПРАВЛЕНО: было @GetMapping, стало @PostMapping
     @PostMapping("/cabinets/delete/{id}")
     public String deleteCabinet(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (cabinetRepository.existsById(id)) {
@@ -69,7 +66,6 @@ public class AdminController {
         return "redirect:/admin/cabinets";
     }
 
-    // --- ГЕНЕРАЦИЯ СЛОТОВ ---
 
     @GetMapping("/generate")
     public String showGenerateForm(
@@ -136,7 +132,6 @@ public class AdminController {
         return "redirect:/cabinet/" + cabinet.getId() + "?date=" + form.getStartDate();
     }
 
-    // --- ЗАПИСИ ---
 
     @GetMapping("/appointments")
     public String listAllAppointments(Model model) {

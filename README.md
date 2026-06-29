@@ -1,44 +1,30 @@
-
 # Hospital Infrastructure Project
 
 ## Overview
-This repository contains the infrastructure code and application components for a clinic's automated system. The project focuses on reliability and automated tracking of medical devices integrated with national systems.
+Automated deployment of a clinic's appointment system with infrastructure as code.
 
 ## Project Structure
-- **terraform/**: Infrastructure as Code for Proxmox.
-- **ansible/**: Server configuration and software deployment.
-- **docker/**: Containerization logic.
-- **app/**: Main application backend (Python/Flask).
-- **bot/**: Notification and management bot.
-- **docs/**: Technical documentation and graduation project materials.
+- **terraform/** – Proxmox IaC (VMs, networking)
+- **ansible/** – Configuration management (Docker, Nginx, Gitea)
+- **docker/** – Container definitions (PostgreSQL, Redis)
+- **app/** – Spring Boot backend (Java 17)
+- **bot/** – Telegram notification bot
+- **cicd/** – Gitea + runner compose file
 
 ## Infrastructure Details
-- **Hypervisor**: Proxmox VE
-- **Base Image**: Ubuntu 22.04 LTS (Cloud Image)
-- **Template ID**: 9000 (Pre-configured with QEMU Guest Agent)
+- **Hypervisor**: Proxmox VE 8
+- **Base OS**: Ubuntu 22.04 LTS
+- **Orchestration**: Docker Compose
+- **CI/CD**: Gitea Actions with self-hosted runner
 
-Реализация автоматизированного деплоя (CD):
+## Deployment Pipeline
+1. Terraform provisions VMs on Proxmox.
+2. Ansible configures Docker, Nginx, and Gitea.
+3. Gitea Actions builds Docker images and pushes to local registry.
+4. Ansible deploy playbook pulls and restarts containers.
 
-Настроен плейбук ansible/deploy.yml для автоматического развертывания на VM 101.
-    Внедрена генерация .env из шаблона Jinja2 с использованием зашифрованных секретов Ansible Vault (БД, пароли, токены).
-    Исправлена инициализация базы данных: обеспечена доставка init-db.sql и правильная настройка прав доступа.
-    Успешно пройден полный цикл: коммит -> сборка в Gitea Actions -> хранение в Registry -> деплой на Production.
+## Secrets Management
+Sensitive variables (DB passwords, bot tokens) are stored in Ansible Vault (`ansible/group_vars/all/vault.yml`).  
+Use `ansible-vault encrypt/decrypt` to manage them.
 
-# Hospital Infrastructure Project
-
-## Overview
-
-
-## Project Structure
-- **terraform/**: Infrastructure as Code for Proxmox.
-- **ansible/**: Server configuration and software deployment.
-- **docker/**: Containerization logic.
-- **app/**: Main application backend (Python/Flask).
-- **bot/**: Notification and management bot.
-- **docs/**: Technical documentation and graduation project materials.
-
-## Infrastructure Details
-- **Hypervisor**: Proxmox VE
-- **Base Image**: Ubuntu 22.04 LTS (Cloud Image)
-- **Template ID**: 9000 (Pre-configured with QEMU Guest Agent)
-# Автоматическая синхронизация из Gitea
+---

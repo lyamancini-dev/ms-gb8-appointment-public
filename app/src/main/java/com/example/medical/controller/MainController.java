@@ -79,7 +79,6 @@ public class MainController {
         return "schedule";
     }
 
-    // --- КОРЗИНА ---
 
     @GetMapping("/cart/add/{id}")
     public String addToCart(@PathVariable Long id) {
@@ -108,7 +107,6 @@ public class MainController {
         return "redirect:/cart";
     }
 
-    // --- ОФОРМЛЕНИЕ ---
 
     @GetMapping("/checkout")
     public String checkoutForm(Model model) {
@@ -160,7 +158,6 @@ public class MainController {
     @GetMapping("/success")
     public String successPage() { return "success"; }
 
-    // --- ПОИСК ---
 
     @GetMapping("/search")
     public String search(@RequestParam("query") String query, Model model) {
@@ -170,7 +167,6 @@ public class MainController {
         return "search-results";
     }
 
-    // --- УПРАВЛЕНИЕ ---
 
     @GetMapping("/cancel/{id}")
     public String cancelAppointment(@PathVariable Long id, RedirectAttributes redirectAttributes) {

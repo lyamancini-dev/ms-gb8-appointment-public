@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-// Главный трюк: эта аннотация создает отдельный экземпляр этого класса
 // для каждого пользователя (сессии) автоматически.
 @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SessionCart {

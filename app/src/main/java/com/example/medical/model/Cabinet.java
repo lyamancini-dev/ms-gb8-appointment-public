@@ -16,7 +16,6 @@ public class Cabinet {
     private String roomNumber;
     private Integer defaultSlotMinutes = 15;
 
-    // ИСПРАВЛЕНО: при удалении кабинета все его записи удаляются автоматически
     @OneToMany(mappedBy = "cabinet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments = new ArrayList<>();
 
