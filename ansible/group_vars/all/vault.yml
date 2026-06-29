@@ -1,0 +1,9 @@
+# Этот файл должен быть зашифрован с помощью ansible-vault.
+# Пример содержимого (реальные значения заменены на примеры):
+---
+db_password: "example_db_password"
+bot_token: "example_bot_token"
+internal_registry: "192.168.1.14:3000"
+# Для шифрования выполните:
+# ansible-vault encrypt ansible/group_vars/all/vault.yml
+# и укажите пароль.
