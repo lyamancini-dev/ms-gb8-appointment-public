@@ -30,7 +30,6 @@
             <td th:text="${cab.roomNumber}">140</td>
             <td th:text="${cab.defaultSlotMinutes}">15</td>
             <td>
-                <!-- ИСПРАВЛЕНО: метод POST вместо GET -->
                 <form th:action="@{/admin/cabinets/delete/{id}(id=${cab.id})}" method="post"
                       style="display: inline;"
                       onsubmit="return confirm('Удалить кабинет? Это удалит и все записи в нем!')">

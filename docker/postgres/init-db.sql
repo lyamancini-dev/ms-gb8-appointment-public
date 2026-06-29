@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS hospital_core; -- Зона Spring Boot
 CREATE SCHEMA IF NOT EXISTS bot_state;     -- Зона Python бота
 
--- Настройка прав (пример для демонстрации в резюме)
+-- Настройка прав
 -- Мы используем одного админа для простоты, но разделяем данные по схемам
 COMMENT ON SCHEMA hospital_core IS 'Main application data: slots, appointments, users';
 COMMENT ON SCHEMA bot_state IS 'Telegram bot internals: conversation states, temporary cache';

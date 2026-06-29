@@ -29,7 +29,6 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- ИСПРАВЛЕНО: было spring-boot-starter-webmvc, правильно: spring-boot-starter-web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -52,7 +51,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- ИСПРАВЛЕНО: правильная тестовая зависимость -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

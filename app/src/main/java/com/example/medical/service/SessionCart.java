@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-// для каждого пользователя (сессии) автоматически.
+// Каждый пользователь получает свою сессию.
 @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SessionCart {
 
